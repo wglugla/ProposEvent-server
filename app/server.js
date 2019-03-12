@@ -5,7 +5,10 @@ import {
 } from 'body-parser';
 import session from 'express-session';
 import passport from 'passport';
-import routes from './routes/routes';
+import router from './routes/routes';
+import userRouter from './routes/userRouter';
+import eventRouter from './routes/eventRouter';
+import tagRouter from './routes/tagRouter';
 
 
 const app = express();
@@ -13,7 +16,9 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 
-app.use('/', routes);
+app.use('/', userRouter);
+app.use('/', eventRouter);
+app.use('/', tagRouter);
 
 app.use(urlencoded({
   extended: false
