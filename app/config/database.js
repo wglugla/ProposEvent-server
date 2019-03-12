@@ -1,12 +1,14 @@
 import mysql from 'mysql';
+import util from 'util';
 
-export const pool = mysql.createPool({
+const pool = mysql.createPool({
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
   password: 'password',
   database: 'ProposEvent'
 });
+
 
 pool.getConnection((err, connection) => {
   if (err) {
@@ -24,3 +26,7 @@ pool.getConnection((err, connection) => {
   }
   if (connection) connection.release();
 });
+
+pool.query = util.promisify(pool.query);
+
+export default pool;
