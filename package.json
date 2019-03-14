@@ -10,7 +10,9 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "mysql": "^2.16.0",
-    "passport": "^0.4.0"
+    "mysql2": "^1.6.5",
+    "passport": "^0.4.0",
+    "sequelize": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
