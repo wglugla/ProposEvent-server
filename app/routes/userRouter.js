@@ -36,7 +36,6 @@ router.get('/users/:id', async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     const data = await userController.registerUser(req.body);
-    console.log('DATA: ', data);
     res.send({
       status: true,
       data: 'User registered'
@@ -52,7 +51,6 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
   try {
     const result = await userController.authUser(req.body);
-    console.log('RESULT ZWROCONY: ', result);
     if (result) {
       res.send({
         status: true,
