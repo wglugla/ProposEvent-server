@@ -1,5 +1,4 @@
 import express from 'express';
-import session from 'express-session';
 import userRouter from './routes/userRouter';
 import eventRouter from './routes/eventRouter';
 import tagRouter from './routes/tagRouter';
