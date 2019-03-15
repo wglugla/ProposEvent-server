@@ -1,24 +1,24 @@
-import db from '../config/database';
 import bcrypt from 'bcryptjs';
 
+import models from '../models/index';
+
 export default {
-  /* List of users in table Users (username, name, surname, registration date) */
   async getAllUsers() {
     try {
-      return await db.query('SELECT * FROM Users');
-    } catch (err) {
-      throw err;
+      return await models.User.findAll();
+    } catch (error) {
+      throw error;
     }
   },
-  /* Find user by id in table Users */
   async getUserById(id) {
     try {
-      return await db.query(`SELECT * FROM Users WHERE user_id=${id}`)
-    } catch (err) {
-      throw err;
+      return await models.User.findByPk(id);
+    } catch (error) {
+      throw error;
     }
   },
-  /* Add new user to database */
+
+
   async registerUser(user) {
     const {
       username,
@@ -40,14 +40,23 @@ export default {
     /* TODO: */
     let result
     try {
-      result = await db.query(`SELECT * FROM Users WHERE username='${username}'`);
+      result = await models.User.findAll({
+        where: {
+          username
+        }
+      })
       if (result.length) {
         throw new Error('User already exists');
       } else {
-        return await db.query(`INSERT INTO Users (username, name, surname, password) VALUES ('${newUser.username}', '${newUser.name}', '${newUser.surname}', '${newUser.password}')`);
+        return await models.User.create({
+          username: newUser.username,
+          name: newUser.name,
+          surname: newUser.surname,
+          password: newUser.password
+        })
       }
-    } catch (err) {
-      throw new Error(err);
+    } catch (error) {
+      throw error;
     }
   },
   async authUser(user) {
@@ -55,13 +64,25 @@ export default {
       username,
       password
     } = user;
-    const target = await db.query(`SELECT password FROM Users WHERE username='${username}'`);
-    const userPassword = target[0].password;
-    console.log('userPassword: ', userPassword);
-    const result = await bcrypt.compare(
-      password,
-      userPassword
-    );
-    return result;
+    try {
+      const target = await models.User.findOne({
+        where: {
+          username
+        }
+      });
+      console.log('target');
+      if (!target) {
+        throw 'Incorrect login or password';
+      }
+      const userPassword = target.dataValues.password;
+      const result = await bcrypt.compare(
+        password,
+        userPassword
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+
   }
 }

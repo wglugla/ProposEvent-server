@@ -10,10 +10,10 @@ router.get('/users', async (req, res) => {
       status: true,
       data
     })
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });
@@ -25,25 +25,25 @@ router.get('/users/:id', async (req, res) => {
       status: true,
       data
     })
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });
 
 router.post('/signup', async (req, res) => {
   try {
-    const data = await userController.registerUser(req.body);
+    await userController.registerUser(req.body);
     res.send({
       status: true,
       data: 'User registered'
     })
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });
@@ -63,10 +63,10 @@ router.post('/signin', async (req, res) => {
       })
     }
 
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });

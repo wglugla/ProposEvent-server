@@ -1,10 +1,10 @@
-import db from '../config/database';
+import models from '../models/index';
 
 export default {
   /* List of events in table Events (event id, owner id, place, date, description */
   async getAllEvents() {
     try {
-      return await db.query('SELECT * FROM Events');
+      return await models.Event.findAll();
     } catch (err) {
       throw new Error(err);
     }
@@ -12,7 +12,7 @@ export default {
   /* Find event by id in table Events */
   async getEventById(id) {
     try {
-      return await db.query(`SELECT * FROM Events WHERE event_id=${id}`)
+      return await models.Event.findByPk(id);
     } catch (err) {
       throw new Error(err);
     }
