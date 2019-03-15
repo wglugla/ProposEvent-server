@@ -1,4 +1,6 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+require('dotenv').config();
 
 import models from '../models/index';
 
@@ -70,7 +72,6 @@ export default {
           username
         }
       });
-      console.log('target');
       if (!target) {
         throw 'Incorrect login or password';
       }
@@ -79,7 +80,13 @@ export default {
         password,
         userPassword
       );
-      return result;
+      if (result) {
+        const token = jwt.sign({
+          username: username
+        }, process.env.SECRET_KEY)
+        return token;
+
+      }
     } catch (error) {
       throw error;
     }

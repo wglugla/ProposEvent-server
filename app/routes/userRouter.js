@@ -1,4 +1,6 @@
 import express from 'express';
+var methods = require("../authorization/auth")
+
 const router = express.Router();
 
 import userController from '../controllers/userController';
@@ -50,19 +52,13 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
   try {
-    const result = await userController.authUser(req.body);
-    if (result) {
-      res.send({
-        status: true,
-        data: 'Success'
-      })
-    } else {
-      res.send({
-        status: true,
-        error: 'No auth!'
-      })
-    }
-
+    const token = await userController.authUser(req.body);
+    if (!token) throw 'incorrect username or password';
+    res.send({
+      status: true,
+      data: 'Success',
+      token
+    })
   } catch (error) {
     res.send({
       status: false,
@@ -70,5 +66,13 @@ router.post('/signin', async (req, res) => {
     })
   }
 });
+
+console.log('TEST', methods);
+router.get("/test", methods.ensureToken, (req, res, next) => {
+  res.render('index', {
+    title: 'Express'
+  })
+})
+
 
 export default router;
