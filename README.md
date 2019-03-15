@@ -4,7 +4,7 @@ Backend to the project **ProposEvent**
 
 ## Backend requirements
 
-REST API using [Node.js](https://nodejs.org/en/docs/), [ExpressJS](http://expressjs.com/), [MySQL](https://github.com/mysqljs/mysql), powered by [Express-session](https://github.com/expressjs/session), [Sequelize](http://docs.sequelizejs.com/) and [Bcryptjs](https://www.npmjs.com/package/bcryptjs)
+REST API using [Node.js](https://nodejs.org/en/docs/), [ExpressJS](http://expressjs.com/), [MySQL](https://github.com/mysqljs/mysql), powered by [Sequelize](http://docs.sequelizejs.com/) and [Bcryptjs](https://www.npmjs.com/package/bcryptjs).
 
 ## Shortcut of the app idea
 
