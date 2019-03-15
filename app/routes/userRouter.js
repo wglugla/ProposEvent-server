@@ -1,5 +1,5 @@
 import express from 'express';
-var methods = require("../authorization/auth")
+import auth from '../middleware/auth';
 
 const router = express.Router();
 
@@ -67,8 +67,7 @@ router.post('/signin', async (req, res) => {
   }
 });
 
-console.log('TEST', methods);
-router.get("/test", methods.ensureToken, (req, res, next) => {
+router.get("/test", auth.ensureToken, (req, res, next) => {
   res.render('index', {
     title: 'Express'
   })
