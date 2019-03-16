@@ -32,7 +32,8 @@ export default {
       username,
       name,
       surname,
-      password
+      password,
+      tags
     }
     bcrypt.hash(password, 8, function (err, hash) {
       if (err) throw err;
@@ -91,5 +92,5 @@ export default {
       throw error;
     }
 
-  }
+  },
 }

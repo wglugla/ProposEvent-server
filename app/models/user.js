@@ -28,6 +28,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false
   });
-  User.associate = function (models) {};
+  User.associate = function (models) {
+    User.hasMany(models.Event, {
+      foreignKey: 'owner_id'
+    });
+    User.hasMany(models.UsersTag, {
+      foreignKey: 'user_id'
+    })
+  };
   return User;
 };

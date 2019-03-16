@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false
   });
-  Tag.associate = function (models) {};
+  Tag.associate = function (models) {
+    Tag.hasMany(models.UsersTag, {
+      foreignKey: 'tag_id'
+    })
+  };
   return Tag;
 };

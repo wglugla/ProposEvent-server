@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'NOT KNOWN',
     },
     date: {
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
+      notNull: true
     },
     description: {
       type: DataTypes.STRING(255),
