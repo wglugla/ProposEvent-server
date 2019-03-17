@@ -30,7 +30,7 @@ Events are selected by tags connected with your account and each event.
 ```json
 {
   "status": true,
-  "data": [] // array of users
+  "data": []
 }
 ```
 
@@ -57,11 +57,11 @@ Events are selected by tags connected with your account and each event.
 {
   "status": true,
   "data": {
-    "user_id",
-    "username",
-    "name",
-    "surname",
-    "password"
+    "user_id": "",
+    "username": "",
+    "name": "",
+    "surname": "",
+    "password": ""
   }
 }
 ```
@@ -163,7 +163,7 @@ Events are selected by tags connected with your account and each event.
 ```json
 {
   "status": true,
-  "data": [] // array of tags
+  "data": []
 }
 ```
 
@@ -190,7 +190,7 @@ Events are selected by tags connected with your account and each event.
 {
   "status": true,
   "data": {
-    "tag_id",
+    "tag_id": "",
     "value"
   }
 }
@@ -218,7 +218,7 @@ Events are selected by tags connected with your account and each event.
 ```json
 {
   "status": true,
-  "data": [] // array of events
+  "data": []
 }
 ```
 
@@ -245,11 +245,11 @@ Events are selected by tags connected with your account and each event.
 {
   "status": true,
   "data": {
-    "event_id",
-    "owner_id",
-    "place",
-    "date",
-    "description"
+    "event_id": "",
+    "owner_id": "",
+    "place": "",
+    "date": "",
+    "description": ""
   }
 }
 ```
