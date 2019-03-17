@@ -18,7 +18,8 @@ export default {
   /* select * from users where id */
   async getUserById(id) {
     try {
-      return await models.User.findByPk(id);
+      const target = await models.User.findByPk(id);
+      if (!target) throw 'Not found';
     } catch (error) {
       throw error;
     }
