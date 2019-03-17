@@ -1,10 +1,15 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Joi from 'joi';
 require('dotenv').config();
 
 import models from '../models/index';
+import {
+  join
+} from 'path';
 
 export default {
+  /* select * from users */
   async getAllUsers() {
     try {
       return await models.User.findAll();
@@ -12,6 +17,8 @@ export default {
       throw error;
     }
   },
+
+  /* select * from users where id */
   async getUserById(id) {
     try {
       return await models.User.findByPk(id);
@@ -20,7 +27,7 @@ export default {
     }
   },
 
-
+  /* insert into Users */
   async registerUser(user) {
     const {
       username,
@@ -28,20 +35,32 @@ export default {
       surname,
       password
     } = user;
+
     const newUser = {
       username,
       name,
       surname,
       password,
-      tags
     }
+
+    const schema = Joi.object().keys({
+      username: Joi.string().min(5).max(45).required(),
+      name: Joi.string().min(5).max(20).required(),
+      surname: Joi.string().min(5).max(20).required(),
+      password: Joi.string().required().regex(/^[a-zA-Z0-9]{8,30}$/),
+    })
+
+    /* validation here */
+    Joi.validate(user, schema, (err, val) => {
+      if (err) throw 'Invalid request data';
+    })
+
     bcrypt.hash(password, 8, function (err, hash) {
       if (err) throw err;
       newUser.password = hash;
     });
-    /* validation here */
-    /* TODO: */
-    let result
+
+    let result;
     try {
       result = await models.User.findAll({
         where: {
@@ -62,6 +81,8 @@ export default {
       throw error;
     }
   },
+
+  /* select, then return jwt token */
   async authUser(user) {
     const {
       username,
