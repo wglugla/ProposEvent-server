@@ -4,9 +4,6 @@ import Joi from 'joi';
 require('dotenv').config();
 
 import models from '../models/index';
-import {
-  join
-} from 'path';
 
 export default {
   /* select * from users */
@@ -33,14 +30,15 @@ export default {
       username,
       name,
       surname,
-      password
+      password,
+      tags
     } = user;
 
     const newUser = {
       username,
       name,
       surname,
-      password,
+      password
     }
 
     const schema = Joi.object().keys({
@@ -48,9 +46,9 @@ export default {
       name: Joi.string().min(5).max(20).required(),
       surname: Joi.string().min(5).max(20).required(),
       password: Joi.string().required().regex(/^[a-zA-Z0-9]{8,30}$/),
+      tags: Joi.string().required(),
     })
 
-    /* validation here */
     Joi.validate(user, schema, (err, val) => {
       if (err) throw 'Invalid request data';
     })
@@ -70,12 +68,71 @@ export default {
       if (result.length) {
         throw new Error('User already exists');
       } else {
+        let newTags = tags.split(',');
+        for (const el of newTags) {
+          try {
+            const checktag = await models.Tag.findOne({
+              where: {
+                value: el
+              }
+            });
+            if (!checktag) {
+              throw 'Tag not exists!';
+            }
+          } catch (error) {
+            throw error;
+          }
+
+        }
+
         return await models.User.create({
           username: newUser.username,
           name: newUser.name,
           surname: newUser.surname,
           password: newUser.password
         })
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /* add tags to user */
+  async addTagsToUser(username, req) {
+    const schema = Joi.object().keys({
+      tags: Joi.string().required(),
+    });
+    Joi.validate(req.body, schema, (err, val) => {
+      if (err) throw 'Invalid request data';
+    })
+    console.log('req', req);
+    let {
+      tags
+    } = req;
+    try {
+      const target = await models.User.findOne({
+        where: {
+          username
+        }
+      });
+      tags = tags.split(',');
+      for (const tag of tags) {
+        try {
+          const newTag = await models.Tag.findOne({
+            where: {
+              value: tag
+            }
+          });
+          const newTagId = newTag.dataValues.tag_id;
+          if (newTagId) {
+            await models.UsersTag.create({
+              user_id: target.user_id,
+              tag_id: newTagId
+            })
+          }
+        } catch (error) {
+          throw error;
+        }
       }
     } catch (error) {
       throw error;

@@ -37,7 +37,8 @@ router.get('/users/:id', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
-    await userController.registerUser(req.body);
+    const newUser = await userController.registerUser(req.body);
+    await userController.addTagsToUser(newUser.username, req.body);
     res.send({
       status: true,
       data: 'User registered'
