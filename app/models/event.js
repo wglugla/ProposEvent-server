@@ -26,6 +26,15 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false
   });
-  Event.associate = function (models) {};
+  Event.associate = function (models) {
+    Event.hasMany(models.UsersEvent, {
+      as: 'fk_UsersEvents_Events',
+      foreignKey: 'event_id'
+    });
+    Event.hasMany(models.EventsTag, {
+      as: 'fk_EventsTags_Events',
+      foreignKey: 'event_id'
+    });
+  };
   return Event;
 };

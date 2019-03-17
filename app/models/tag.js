@@ -17,8 +17,13 @@ module.exports = (sequelize, DataTypes) => {
   });
   Tag.associate = function (models) {
     Tag.hasMany(models.UsersTag, {
+      as: 'fk_UsersTags_Tags',
       foreignKey: 'tag_id'
-    })
+    });
+    Tag.hasMany(models.EventsTag, {
+      as: 'fk_EventsTags_Tags',
+      foreignKey: 'tag_id'
+    });
   };
   return Tag;
 };

@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'owner_id'
     });
     User.hasMany(models.UsersTag, {
+      as: 'fk_UsersTags_Users',
+      foreignKey: 'user_id'
+    })
+    User.hasMany(models.UsersEvent, {
+      as: 'fk_UsersEvents_Users',
       foreignKey: 'user_id'
     })
   };
