@@ -10,10 +10,10 @@ router.get('/events', async (req, res) => {
       status: true,
       data
     })
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });
@@ -25,12 +25,28 @@ router.get('/events/:id', async (req, res) => {
       status: true,
       data
     })
-  } catch (err) {
+  } catch (error) {
     res.send({
       status: false,
-      error: `${err}`
+      error: `${error}`
     })
   }
 });
+
+router.post('/events/create', async (req, res) => {
+  try {
+    const newEvent = await eventController.createEvent(req.body);
+    await eventController.addTagsToEvent(newEvent.event_id, req.body);
+    res.send({
+      status: true,
+      data: 'Event created'
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      erro: `${error}`
+    })
+  }
+})
 
 export default router;
