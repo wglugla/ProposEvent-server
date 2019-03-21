@@ -1,11 +1,33 @@
 import models from '../models/index';
 import Joi from 'joi';
+import tagController from './tagController';
 
 export default {
   /* List of events in table Events (event id, owner id, place, date, description */
   async getAllEvents() {
     try {
-      return await models.Event.findAll();
+      let events = await models.Event.findAll({
+        include: [{
+          model: models.EventsTag,
+          as: "event_tags"
+        }]
+      });
+      for (let el of events) {
+        let eventTags = [];
+        try {
+          for (const tag of el.event_tags) {
+            const tagName = await tagController.getTagById(tag.dataValues.tag_id);
+            tagName = tagName.value;
+            eventTags.push(tagName);
+          }
+          delete el.dataValues.event_tags;
+          el.dataValues.event_tags = `${eventTags}`;
+
+        } catch (error) {
+          throw error;
+        }
+      }
+      return events;
     } catch (err) {
       throw new Error(err);
     }
@@ -107,4 +129,75 @@ export default {
       throw error;
     }
   },
-};
+
+  async modifyEvent(event) {
+    const {
+      event_id,
+      owner_id,
+      place,
+      date,
+      description,
+      tags
+    } = event;
+
+    try {
+      const schema = Joi.object().keys({
+        event_id: Joi.number().required(),
+        owner_id: Joi.number().required(),
+        place: Joi.string()
+          .min(5)
+          .max(45)
+          .required(),
+        date: Joi.date().required(),
+        description: Joi.string()
+          .min(5)
+          .max(255)
+          .required(),
+        tags: Joi.string().required()
+      });
+      Joi.validate(event, schema, (err, val) => {
+        if (err) throw err;
+      });
+      let newTags = tags.split(',');
+      for (const el of newTags) {
+        try {
+          const checktag = await models.Tag.findOne({
+            where: {
+              value: el
+            }
+          });
+          if (!checktag) {
+            throw 'Tag not exists!';
+          }
+        } catch (error) {
+          throw error;
+        }
+      }
+
+      return await models.Event.update({
+        owner_id: owner_id,
+        place: place,
+        date: date,
+        description: description
+      }, {
+        where: {
+          event_id
+        }
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  async removeTagsFromEvent(event_id) {
+    try {
+      return await models.EventsTag.destroy({
+        where: {
+          event_id
+        }
+      })
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+}

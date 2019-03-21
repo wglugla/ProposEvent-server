@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'event_id'
     });
     Event.hasMany(models.EventsTag, {
-      as: 'fk_EventsTags_Events',
+      as: 'event_tags',
       foreignKey: 'event_id'
     });
   };

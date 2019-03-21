@@ -44,7 +44,25 @@ router.post('/events/create', async (req, res) => {
   } catch (error) {
     res.send({
       status: false,
-      erro: `${error}`
+      error: `${error}`
+    })
+  }
+})
+
+router.post('/events/modify/:id', async (req, res) => {
+  req.body.event_id = req.params.id;
+  try {
+    const modifiedEvent = await eventController.modifyEvent(req.body);
+    await eventController.removeTagsFromEvent(req.params.id);
+    await eventController.addTagsToEvent(req.params.id, req.body);
+    res.send({
+      status: true,
+      data: 'Event modified!'
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`
     })
   }
 })
