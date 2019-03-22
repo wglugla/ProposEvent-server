@@ -94,6 +94,7 @@ export default {
     })
 
     Joi.validate(user, schema, (err, val) => {
+      console.log(err)
       if (err) throw 'Invalid request data';
     })
 

@@ -37,6 +37,10 @@ router.post('/events/create', async (req, res) => {
   try {
     const newEvent = await eventController.createEvent(req.body);
     await eventController.addTagsToEvent(newEvent.event_id, req.body);
+    await eventController.addMember({
+      user_id: req.body.owner_id,
+      event_id: newEvent.event_id
+    });
     res.send({
       status: true,
       data: 'Event created'
