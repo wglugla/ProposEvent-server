@@ -50,13 +50,23 @@ export default {
     }
   },
 
-  // async getUserSignedEvents(id) {
-  //   try {
-
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
+  async getUserSignedEvents(id) {
+    try {
+      let list = []
+      const data = await models.UsersEvent.findAll({
+        where: {
+          user_id: id
+        }
+      });
+      for (const el of data) {
+        let event = await models.Event.findByPk(el.dataValues.event_id);
+        list.push(event);
+      }
+      return list;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   /* insert into Users */
   async registerUser(user) {

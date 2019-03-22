@@ -50,20 +50,20 @@ router.get('/users/:id/events', async (req, res) => {
   }
 });
 
-// router.get('/users/:id/signedEvents', async (req, res) => {
-//   try {
-//     const data = await userController.getUserSignedEvents(req.params.id);
-//     res.send({
-//       status: true,
-//       data
-//     })
-//   } catch (error) {
-//     res.send({
-//       status: false,
-//       error: `${error}`
-//     })
-//   }
-// })
+router.get('/users/:id/signedEvents', async (req, res) => {
+  try {
+    const data = await userController.getUserSignedEvents(req.params.id);
+    res.send({
+      status: true,
+      data
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`
+    })
+  }
+})
 
 
 router.post('/signup', async (req, res) => {
