@@ -30,7 +30,7 @@ export default {
         }
       })
       target.dataValues.eventsCreated = eventsCreated.count;
-      target.dataValues.eventsMember = eventsMember.count;
+      target.dataValues.eventsSigned = eventsMember.count;
       if (!target) throw 'Not found';
       return target;
     } catch (error) {
