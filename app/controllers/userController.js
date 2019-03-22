@@ -19,7 +19,20 @@ export default {
   async getUserById(id) {
     try {
       const target = await models.User.findByPk(id);
+      const eventsCreated = await models.Event.findAndCountAll({
+        where: {
+          owner_id: id
+        }
+      })
+      const eventsMember = await models.UsersEvent.findAndCountAll({
+        where: {
+          user_id: id
+        }
+      })
+      target.dataValues.eventsCreated = eventsCreated.count;
+      target.dataValues.eventsMember = eventsMember.count;
       if (!target) throw 'Not found';
+      return target;
     } catch (error) {
       throw error;
     }
