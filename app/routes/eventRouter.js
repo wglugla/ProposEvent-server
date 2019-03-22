@@ -47,7 +47,7 @@ router.post('/events/create', async (req, res) => {
       error: `${error}`
     })
   }
-})
+});
 
 router.post('/events/modify/:id', async (req, res) => {
   req.body.event_id = req.params.id;
@@ -58,6 +58,36 @@ router.post('/events/modify/:id', async (req, res) => {
     res.send({
       status: true,
       data: 'Event modified!'
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`
+    })
+  }
+});
+
+router.post('/events/addmember', async (req, res) => {
+  try {
+    await eventController.addMember(req.body);
+    res.send({
+      status: true,
+      data: 'User added'
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`
+    })
+  }
+});
+
+router.post('/events/removemember', async (req, res) => {
+  try {
+    await eventController.removeMember(req.body);
+    res.send({
+      status: true,
+      data: 'User removed'
     })
   } catch (error) {
     res.send({

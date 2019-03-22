@@ -199,5 +199,69 @@ export default {
     } catch (error) {
       throw new Error(error);
     }
+  },
+
+  async addMember(body) {
+    const {
+      user_id,
+      event_id
+    } = body;
+    try {
+      const schema = Joi.object().keys({
+        user_id: Joi.number().required(),
+        event_id: Joi.number().required()
+      })
+      Joi.validate(body, schema, (err, val) => {
+        if (err) throw err;
+      });
+      const exist = await models.UsersEvent.findAll({
+        where: {
+          user_id,
+          event_id
+        }
+      });
+      if (exist.length) {
+        throw 'User is already member of this event!';
+      }
+      return await models.UsersEvent.create({
+        user_id,
+        event_id
+      })
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  async removeMember(body) {
+    const {
+      user_id,
+      event_id
+    } = body;
+    try {
+      const schema = Joi.object().keys({
+        user_id: Joi.number().required(),
+        event_id: Joi.number().required()
+      })
+      Joi.validate(body, schema, (err, val) => {
+        if (err) throw err;
+      });
+      const exist = await models.UsersEvent.findAll({
+        where: {
+          user_id,
+          event_id
+        }
+      });
+      if (!exist.length) {
+        throw 'User is not a member of this event!';
+      }
+      return await models.UsersEvent.destroy({
+        where: {
+          user_id,
+          event_id
+        }
+      })
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
