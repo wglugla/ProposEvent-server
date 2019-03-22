@@ -35,6 +35,37 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
+router.get('/users/:id/events', async (req, res) => {
+  try {
+    const data = await userController.getUserEvents(req.params.id);
+    res.send({
+      status: true,
+      data
+    })
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`
+    })
+  }
+});
+
+// router.get('/users/:id/signedEvents', async (req, res) => {
+//   try {
+//     const data = await userController.getUserSignedEvents(req.params.id);
+//     res.send({
+//       status: true,
+//       data
+//     })
+//   } catch (error) {
+//     res.send({
+//       status: false,
+//       error: `${error}`
+//     })
+//   }
+// })
+
+
 router.post('/signup', async (req, res) => {
   try {
     const newUser = await userController.registerUser(req.body);
@@ -72,7 +103,7 @@ router.get("/test", auth.ensureToken, (req, res, next) => {
   res.render('index', {
     title: 'Express'
   })
-})
+});
 
 
 export default router;

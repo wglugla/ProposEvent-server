@@ -38,6 +38,26 @@ export default {
     }
   },
 
+  async getUserEvents(id) {
+    try {
+      return await models.Event.findAll({
+        where: {
+          owner_id: id
+        }
+      })
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // async getUserSignedEvents(id) {
+  //   try {
+
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
+
   /* insert into Users */
   async registerUser(user) {
     const {
