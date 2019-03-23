@@ -7,22 +7,25 @@ export default {
   async getAllEvents() {
     try {
       let events = await models.Event.findAll({
-        include: [{
-          model: models.EventsTag,
-          as: "event_tags"
-        }]
+        include: [
+          {
+            model: models.EventsTag,
+            as: 'event_tags',
+          },
+        ],
       });
       for (let el of events) {
         let eventTags = [];
         try {
           for (const tag of el.event_tags) {
-            const tagName = await tagController.getTagById(tag.dataValues.tag_id);
+            const tagName = await tagController.getTagById(
+              tag.dataValues.tag_id
+            );
             tagName = tagName.value;
             eventTags.push(tagName);
           }
           delete el.dataValues.event_tags;
           el.dataValues.event_tags = `${eventTags}`;
-
         } catch (error) {
           throw error;
         }
@@ -43,13 +46,7 @@ export default {
   },
 
   async createEvent(event) {
-    const {
-      owner_id,
-      place,
-      date,
-      description,
-      tags
-    } = event;
+    const { owner_id, place, date, description, tags } = event;
 
     try {
       const schema = Joi.object().keys({
@@ -63,7 +60,7 @@ export default {
           .min(5)
           .max(255)
           .required(),
-        tags: Joi.string().required()
+        tags: Joi.string().required(),
       });
       Joi.validate(event, schema, (err, val) => {
         if (err) throw err;
@@ -73,8 +70,8 @@ export default {
         try {
           const checktag = await models.Tag.findOne({
             where: {
-              value: el
-            }
+              value: el,
+            },
           });
           if (!checktag) {
             throw 'Tag not exists!';
@@ -88,7 +85,7 @@ export default {
         owner_id: owner_id,
         place: place,
         date: date,
-        description: description
+        description: description,
       });
     } catch (err) {
       throw new Error(err);
@@ -97,29 +94,27 @@ export default {
 
   /* add tags to event */
   async addTagsToEvent(event_id, req) {
-    let {
-      tags
-    } = req;
+    let { tags } = req;
     try {
       const target = await models.Event.findOne({
         where: {
-          event_id
-        }
+          event_id,
+        },
       });
       tags = tags.split(',');
       for (const tag of tags) {
         try {
           const newTag = await models.Tag.findOne({
             where: {
-              value: tag
-            }
+              value: tag,
+            },
           });
           const newTagId = newTag.dataValues.tag_id;
           if (newTagId) {
             await models.EventsTag.create({
               event_id: target.event_id,
-              tag_id: newTagId
-            })
+              tag_id: newTagId,
+            });
           }
         } catch (error) {
           throw error;
@@ -131,14 +126,7 @@ export default {
   },
 
   async modifyEvent(event) {
-    const {
-      event_id,
-      owner_id,
-      place,
-      date,
-      description,
-      tags
-    } = event;
+    const { event_id, owner_id, place, date, description, tags } = event;
 
     try {
       const schema = Joi.object().keys({
@@ -153,7 +141,7 @@ export default {
           .min(5)
           .max(255)
           .required(),
-        tags: Joi.string().required()
+        tags: Joi.string().required(),
       });
       Joi.validate(event, schema, (err, val) => {
         if (err) throw err;
@@ -163,8 +151,8 @@ export default {
         try {
           const checktag = await models.Tag.findOne({
             where: {
-              value: el
-            }
+              value: el,
+            },
           });
           if (!checktag) {
             throw 'Tag not exists!';
@@ -174,16 +162,19 @@ export default {
         }
       }
 
-      return await models.Event.update({
-        owner_id: owner_id,
-        place: place,
-        date: date,
-        description: description
-      }, {
-        where: {
-          event_id
+      return await models.Event.update(
+        {
+          owner_id: owner_id,
+          place: place,
+          date: date,
+          description: description,
+        },
+        {
+          where: {
+            event_id,
+          },
         }
-      });
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -193,63 +184,57 @@ export default {
     try {
       return await models.EventsTag.destroy({
         where: {
-          event_id
-        }
-      })
+          event_id,
+        },
+      });
     } catch (error) {
       throw new Error(error);
     }
   },
 
   async addMember(body) {
-    const {
-      user_id,
-      event_id
-    } = body;
+    const { user_id, event_id } = body;
     try {
       const schema = Joi.object().keys({
         user_id: Joi.number().required(),
-        event_id: Joi.number().required()
-      })
+        event_id: Joi.number().required(),
+      });
       Joi.validate(body, schema, (err, val) => {
         if (err) throw err;
       });
       const exist = await models.UsersEvent.findAll({
         where: {
           user_id,
-          event_id
-        }
+          event_id,
+        },
       });
       if (exist.length) {
         throw 'User is already member of this event!';
       }
       return await models.UsersEvent.create({
         user_id,
-        event_id
-      })
+        event_id,
+      });
     } catch (error) {
       throw new Error(error);
     }
   },
 
   async removeMember(body) {
-    const {
-      user_id,
-      event_id
-    } = body;
+    const { user_id, event_id } = body;
     try {
       const schema = Joi.object().keys({
         user_id: Joi.number().required(),
-        event_id: Joi.number().required()
-      })
+        event_id: Joi.number().required(),
+      });
       Joi.validate(body, schema, (err, val) => {
         if (err) throw err;
       });
       const exist = await models.UsersEvent.findAll({
         where: {
           user_id,
-          event_id
-        }
+          event_id,
+        },
       });
       if (!exist.length) {
         throw 'User is not a member of this event!';
@@ -257,11 +242,11 @@ export default {
       return await models.UsersEvent.destroy({
         where: {
           user_id,
-          event_id
-        }
-      })
+          event_id,
+        },
+      });
     } catch (error) {
       throw new Error(error);
     }
-  }
-}
+  },
+};

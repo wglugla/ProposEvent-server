@@ -1,59 +1,60 @@
 import express from 'express';
+import auth from '../middleware/auth';
 const router = express.Router();
 
 import eventController from '../controllers/eventController';
 
-router.get('/events', async (req, res) => {
+router.get('/events', auth.ensureToken, async (req, res) => {
   try {
     const data = await eventController.getAllEvents();
     res.send({
       status: true,
-      data
-    })
+      data,
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
 });
 
-router.get('/events/:id', async (req, res) => {
+router.get('/events/:id', auth.ensureToken, async (req, res) => {
   try {
     const data = await eventController.getEventById(req.params.id);
     res.send({
       status: true,
-      data
-    })
+      data,
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
 });
 
-router.post('/events/create', async (req, res) => {
+router.post('/events/create', auth.ensureToken, async (req, res) => {
   try {
     const newEvent = await eventController.createEvent(req.body);
     await eventController.addTagsToEvent(newEvent.event_id, req.body);
     await eventController.addMember({
       user_id: req.body.owner_id,
-      event_id: newEvent.event_id
+      event_id: newEvent.event_id,
     });
     res.send({
       status: true,
-      data: 'Event created'
-    })
+      data: 'Event created',
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
 });
 
-router.post('/events/modify/:id', async (req, res) => {
+router.post('/events/modify/:id', auth.verifyEventOwner, async (req, res) => {
   req.body.event_id = req.params.id;
   try {
     await eventController.modifyEvent(req.body);
@@ -61,44 +62,44 @@ router.post('/events/modify/:id', async (req, res) => {
     await eventController.addTagsToEvent(req.params.id, req.body);
     res.send({
       status: true,
-      data: 'Event modified!'
-    })
+      data: 'Event modified!',
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
 });
 
-router.post('/events/addmember', async (req, res) => {
+router.post('/events/addmember', auth.ensureToken, async (req, res) => {
   try {
     await eventController.addMember(req.body);
     res.send({
       status: true,
-      data: 'User added'
-    })
+      data: 'User added',
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
 });
 
-router.post('/events/removemember', async (req, res) => {
+router.post('/events/removemember', auth.ensureToken, async (req, res) => {
   try {
     await eventController.removeMember(req.body);
     res.send({
       status: true,
-      data: 'User removed'
-    })
+      data: 'User removed',
+    });
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`
-    })
+      error: `${error}`,
+    });
   }
-})
+});
 
 export default router;

@@ -1,4 +1,3 @@
 // import db from '../config/database';
 
-
-export default {}
+export default {};

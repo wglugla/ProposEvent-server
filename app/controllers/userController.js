@@ -1,9 +1,9 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import Joi from "joi";
-require("dotenv").config();
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import Joi from 'joi';
+require('dotenv').config();
 
-import models from "../models/index";
+import models from '../models/index';
 
 export default {
   /* select * from users */
@@ -21,17 +21,17 @@ export default {
       const target = await models.User.findByPk(id);
       const eventsCreated = await models.Event.findAndCountAll({
         where: {
-          owner_id: id
-        }
+          owner_id: id,
+        },
       });
       const eventsMember = await models.UsersEvent.findAndCountAll({
         where: {
-          user_id: id
-        }
+          user_id: id,
+        },
       });
       target.dataValues.eventsCreated = eventsCreated.count;
       target.dataValues.eventsSigned = eventsMember.count;
-      if (!target) throw "Not found";
+      if (!target) throw 'Not found';
       return target;
     } catch (error) {
       throw error;
@@ -42,8 +42,8 @@ export default {
     try {
       return await models.Event.findAll({
         where: {
-          owner_id: id
-        }
+          owner_id: id,
+        },
       });
     } catch (error) {
       throw error;
@@ -55,8 +55,8 @@ export default {
       let list = [];
       const data = await models.UsersEvent.findAll({
         where: {
-          user_id: id
-        }
+          user_id: id,
+        },
       });
       for (const el of data) {
         let event = await models.Event.findByPk(el.dataValues.event_id);
@@ -76,7 +76,7 @@ export default {
       username,
       name,
       surname,
-      password
+      password,
     };
 
     const schema = Joi.object().keys({
@@ -95,12 +95,12 @@ export default {
       password: Joi.string()
         .required()
         .regex(/^[a-zA-Z0-9]{8,30}$/),
-      tags: Joi.string().required()
+      tags: Joi.string().required(),
     });
 
     Joi.validate(user, schema, (err, val) => {
       console.log(err);
-      if (err) throw "Invalid request data";
+      if (err) throw 'Invalid request data';
     });
 
     bcrypt.hash(password, 8, function(err, hash) {
@@ -112,22 +112,22 @@ export default {
     try {
       result = await models.User.findAll({
         where: {
-          username
-        }
+          username,
+        },
       });
       if (result.length) {
-        throw new Error("User already exists");
+        throw new Error('User already exists');
       } else {
-        let newTags = tags.split(",");
+        let newTags = tags.split(',');
         for (const el of newTags) {
           try {
             const checktag = await models.Tag.findOne({
               where: {
-                value: el
-              }
+                value: el,
+              },
             });
             if (!checktag) {
-              throw "Tag not exists!";
+              throw 'Tag not exists!';
             }
           } catch (error) {
             throw error;
@@ -138,7 +138,7 @@ export default {
           username: newUser.username,
           name: newUser.name,
           surname: newUser.surname,
-          password: newUser.password
+          password: newUser.password,
         });
       }
     } catch (error) {
@@ -149,32 +149,32 @@ export default {
   /* add tags to user */
   async addTagsToUser(username, req) {
     const schema = Joi.object().keys({
-      tags: Joi.string().required()
+      tags: Joi.string().required(),
     });
     Joi.validate(req.body, schema, (err, val) => {
-      if (err) throw "Invalid request data";
+      if (err) throw 'Invalid request data';
     });
-    console.log("req", req);
+    console.log('req', req);
     let { tags } = req;
     try {
       const target = await models.User.findOne({
         where: {
-          username
-        }
+          username,
+        },
       });
-      tags = tags.split(",");
+      tags = tags.split(',');
       for (const tag of tags) {
         try {
           const newTag = await models.Tag.findOne({
             where: {
-              value: tag
-            }
+              value: tag,
+            },
           });
           const newTagId = newTag.dataValues.tag_id;
           if (newTagId) {
             await models.UsersTag.create({
               user_id: target.user_id,
-              tag_id: newTagId
+              tag_id: newTagId,
             });
           }
         } catch (error) {
@@ -192,18 +192,18 @@ export default {
     try {
       const target = await models.User.findOne({
         where: {
-          username
-        }
+          username,
+        },
       });
       if (!target) {
-        throw "Incorrect login or password";
+        throw 'Incorrect login or password';
       }
       const userPassword = target.dataValues.password;
       const result = await bcrypt.compare(password, userPassword);
       if (result) {
         const token = jwt.sign(
           {
-            user_id: target.user_id
+            user_id: target.user_id,
           },
           process.env.SECRET_KEY
         );
@@ -212,5 +212,5 @@ export default {
     } catch (error) {
       throw error;
     }
-  }
+  },
 };

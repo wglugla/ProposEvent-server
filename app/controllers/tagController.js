@@ -15,6 +15,5 @@ export default {
     } catch (err) {
       throw new Error(err);
     }
-  }
-
-}
+  },
+};
