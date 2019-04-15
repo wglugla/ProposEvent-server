@@ -9,7 +9,9 @@ export default {
   /* select * from users */
   async getAllUsers() {
     try {
-      return await models.User.findAll();
+      return await models.User.findAll({
+        attributes: ['user_id', 'username', 'name', 'surname'],
+      });
     } catch (error) {
       throw error;
     }
@@ -18,7 +20,10 @@ export default {
   /* select * from users where id */
   async getUserById(id) {
     try {
-      const target = await models.User.findByPk(id);
+      const target = await models.User.findOne({
+        where: { user_id: id },
+        attributes: ['user_id', 'username', 'name', 'surname'],
+      });
       const eventsCreated = await models.Event.findAndCountAll({
         where: {
           owner_id: id,
