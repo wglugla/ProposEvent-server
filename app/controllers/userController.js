@@ -99,7 +99,6 @@ export default {
     });
 
     Joi.validate(user, schema, (err, val) => {
-      console.log(err);
       if (err) throw 'Invalid request data';
     });
 
@@ -120,17 +119,19 @@ export default {
       } else {
         let newTags = tags.split(',');
         for (const el of newTags) {
-          try {
-            const checktag = await models.Tag.findOne({
-              where: {
-                value: el,
-              },
-            });
-            if (!checktag) {
-              throw 'Tag not exists!';
+          if (el.length) {
+            try {
+              const checktag = await models.Tag.findOne({
+                where: {
+                  value: el,
+                },
+              });
+              if (!checktag) {
+                throw 'Tag not exists!';
+              }
+            } catch (error) {
+              throw error;
             }
-          } catch (error) {
-            throw error;
           }
         }
 
@@ -154,7 +155,6 @@ export default {
     Joi.validate(req.body, schema, (err, val) => {
       if (err) throw 'Invalid request data';
     });
-    console.log('req', req);
     let { tags } = req;
     try {
       const target = await models.User.findOne({
@@ -205,9 +205,13 @@ export default {
           {
             user_id: target.user_id,
           },
-          process.env.SECRET_KEY
+          process.env.SECRET_KEY,
+          {
+            expiresIn: '24h',
+          }
         );
-        return token;
+        const userId = target.user_id;
+        return { token, userId };
       }
     } catch (error) {
       throw error;
