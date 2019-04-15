@@ -26,7 +26,6 @@ module.exports.verifyUser = (req, res, next) => {
       if (err) {
         res.sendStatus(403);
       } else {
-        console.log(`${result.user_id} : ${req.params.id}`);
         if (result.user_id == req.params.id) {
           next();
         } else {
@@ -48,7 +47,6 @@ module.exports.verifyEventOwner = (req, res, next) => {
       if (err) {
         res.sendStatus(403);
       } else {
-        console.log('CALY STATUS: ', req.body.owner_id);
         if (result.user_id == req.body.owner_id) {
           next();
         } else {

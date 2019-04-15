@@ -83,12 +83,13 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
   try {
-    const token = await userController.authUser(req.body);
-    if (!token) throw 'incorrect username or password';
+    const data = await userController.authUser(req.body);
+    if (!data) throw 'incorrect username or password';
     res.send({
       status: true,
       data: 'Success',
-      token,
+      token: data.token,
+      userId: data.userId,
     });
   } catch (error) {
     res.send({
@@ -96,12 +97,6 @@ router.post('/signin', async (req, res) => {
       error: `${error}`,
     });
   }
-});
-
-router.get('/test', auth.ensureToken, (req, res, next) => {
-  res.render('index', {
-    title: 'Express',
-  });
 });
 
 export default router;
