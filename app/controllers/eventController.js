@@ -51,6 +51,10 @@ export default {
     try {
       const schema = Joi.object().keys({
         owner_id: Joi.number().required(),
+        title: Joi.string()
+          .min(5)
+          .max(45)
+          .required(),
         place: Joi.string()
           .min(5)
           .max(45)
@@ -83,6 +87,7 @@ export default {
 
       return await models.Event.create({
         owner_id: owner_id,
+        title: title,
         place: place,
         date: date,
         description: description,
@@ -132,6 +137,10 @@ export default {
       const schema = Joi.object().keys({
         event_id: Joi.number().required(),
         owner_id: Joi.number().required(),
+        title: Joi.string()
+          .min(5)
+          .max(45)
+          .required(),
         place: Joi.string()
           .min(5)
           .max(45)
@@ -165,6 +174,7 @@ export default {
       return await models.Event.update(
         {
           owner_id: owner_id,
+          title: title,
           place: place,
           date: date,
           description: description,

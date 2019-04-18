@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         notNull: true,
       },
+      title: {
+        type: DataTypes.STRING(45),
+        notNull: true,
+      },
       place: {
         type: DataTypes.STRING(45),
         defaultValue: 'NOT KNOWN',
