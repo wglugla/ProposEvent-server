@@ -94,7 +94,7 @@ router.post('/signin', async (req, res) => {
   } catch (error) {
     res.send({
       status: false,
-      error: `${error}`,
+      message: `${error}`,
     });
   }
 });
