@@ -46,7 +46,7 @@ export default {
   },
 
   async createEvent(event) {
-    const { owner_id, place, date, description, tags } = event;
+    const { owner_id, title, place, date, description, tags } = event;
 
     try {
       const schema = Joi.object().keys({
