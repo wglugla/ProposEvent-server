@@ -4,7 +4,7 @@ import auth from '../middleware/auth';
 
 import tagController from '../controllers/tagController';
 
-router.get('/tags', auth.ensureToken, async (req, res) => {
+router.get('/tags', async (req, res) => {
   try {
     const data = await tagController.getAllTags();
     res.send({
