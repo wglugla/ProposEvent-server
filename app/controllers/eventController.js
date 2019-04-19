@@ -39,7 +39,30 @@ export default {
   /* Find event by id in table Events */
   async getEventById(id) {
     try {
-      return await models.Event.findByPk(id);
+      const event = await models.Event.findOne({
+        where: {
+          event_id: id,
+        },
+        include: [
+          {
+            model: models.EventsTag,
+            as: 'event_tags',
+          },
+        ],
+      });
+      let eventTags = [];
+      try {
+        for (const tag of event.event_tags) {
+          const tagName = await tagController.getTagById(tag.dataValues.tag_id);
+          tagName = tagName.value;
+          eventTags.push(tagName);
+        }
+        delete event.dataValues.event_tags;
+        event.dataValues.event_tags = `${eventTags}`;
+        return event;
+      } catch (error) {
+        throw error;
+      }
     } catch (err) {
       throw new Error(err);
     }

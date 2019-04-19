@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Joi from 'joi';
+import tagController from './tagController';
 require('dotenv').config();
 
 import models from '../models/index';
@@ -45,11 +46,34 @@ export default {
 
   async getUserEvents(id) {
     try {
-      return await models.Event.findAll({
+      const events = await models.Event.findAll({
         where: {
           owner_id: id,
         },
+        include: [
+          {
+            model: models.EventsTag,
+            as: 'event_tags',
+          },
+        ],
       });
+      for (let el of events) {
+        let eventTags = [];
+        try {
+          for (const tag of el.event_tags) {
+            const tagName = await tagController.getTagById(
+              tag.dataValues.tag_id
+            );
+            tagName = tagName.value;
+            eventTags.push(tagName);
+          }
+          delete el.dataValues.event_tags;
+          el.dataValues.event_tags = JSON.stringify(eventTags);
+        } catch (error) {
+          throw error;
+        }
+      }
+      return events;
     } catch (error) {
       throw error;
     }
@@ -64,9 +88,37 @@ export default {
         },
       });
       for (const el of data) {
-        let event = await models.Event.findByPk(el.dataValues.event_id);
+        let event = await models.Event.findOne({
+          where: {
+            event_id: el.dataValues.event_id,
+          },
+          include: [
+            {
+              model: models.EventsTag,
+              as: 'event_tags',
+            },
+          ],
+        });
+        let eventTags = [];
+        try {
+          for (const tag of event.event_tags) {
+            const tagName = await tagController.getTagById(
+              tag.dataValues.tag_id
+            );
+            tagName = tagName.value;
+            eventTags.push(tagName);
+          }
+          delete event.dataValues.event_tags;
+          event.dataValues.event_tags = JSON.stringify(eventTags);
+        } catch (error) {
+          throw error;
+        }
         list.push(event);
       }
+      console.log('LIST');
+      console.log('LIST');
+      console.log('LIST');
+      console.log(list);
       return list;
     } catch (error) {
       throw error;
