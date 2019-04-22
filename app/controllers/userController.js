@@ -24,6 +24,12 @@ export default {
       const target = await models.User.findOne({
         where: { user_id: id },
         attributes: ['user_id', 'username', 'name', 'surname'],
+        include: [
+          {
+            model: models.UsersTag,
+            as: 'user_tags',
+          },
+        ],
       });
       const eventsCreated = await models.Event.findAndCountAll({
         where: {
@@ -35,6 +41,18 @@ export default {
           user_id: id,
         },
       });
+      let userTags = [];
+      try {
+        for (const tag of target.user_tags) {
+          const tagName = await tagController.getTagById(tag.dataValues.tag_id);
+          tagName = tagName.value;
+          userTags.push(tagName);
+        }
+        delete target.dataValues.user_tags;
+        target.dataValues.user_tags = JSON.stringify(userTags);
+      } catch (error) {
+        throw error;
+      }
       target.dataValues.eventsCreated = eventsCreated.count;
       target.dataValues.eventsSigned = eventsMember.count;
       if (!target) throw 'Not found';
@@ -115,10 +133,6 @@ export default {
         }
         list.push(event);
       }
-      console.log('LIST');
-      console.log('LIST');
-      console.log('LIST');
-      console.log(list);
       return list;
     } catch (error) {
       throw error;

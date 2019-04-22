@@ -25,7 +25,7 @@ export default {
             eventTags.push(tagName);
           }
           delete el.dataValues.event_tags;
-          el.dataValues.event_tags = `${eventTags}`;
+          el.dataValues.event_tags = JSON.stringify(eventTags);
         } catch (error) {
           throw error;
         }
