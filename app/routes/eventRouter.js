@@ -34,6 +34,21 @@ router.get('/events/:id', auth.ensureToken, async (req, res) => {
   }
 });
 
+router.delete('/events/:id', auth.ensureToken, async (req, res) => {
+  try {
+    const data = await eventController.deleteEventById(req.params.id);
+    res.send({
+      status: true,
+      data,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`,
+    });
+  }
+});
+
 router.post('/events/create', auth.ensureToken, async (req, res) => {
   try {
     const newEvent = await eventController.createEvent(req.body);

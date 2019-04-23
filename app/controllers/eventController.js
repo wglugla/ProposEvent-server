@@ -68,6 +68,20 @@ export default {
     }
   },
 
+  /* delete event by id */
+  async deleteEventById(id) {
+    try {
+      const event = await models.Event.destroy({
+        where: {
+          event_id: id,
+        },
+      });
+      return event;
+    } catch (err) {
+      throw new Error(err);
+    }
+  },
+
   async createEvent(event) {
     const { owner_id, title, place, date, description, tags } = event;
 
