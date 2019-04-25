@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 const router = express.Router();
 
 import eventController from '../controllers/eventController';
+import userController from '../controllers/userController';
 
 router.get('/events', auth.ensureToken, async (req, res) => {
   try {
@@ -108,6 +109,27 @@ router.post('/events/removemember', auth.ensureToken, async (req, res) => {
     res.send({
       status: true,
       data: 'User removed',
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`,
+    });
+  }
+});
+
+router.get('/events/match/:id', auth.ensureToken, async (req, res) => {
+  const { id } = req.params;
+  const tags = JSON.parse(req.query.tags);
+  const tagsArray = JSON.parse(tags);
+  try {
+    let events = await eventController.getAllEvents();
+    let signedEvents = await userController.getUserSignedEvents(id);
+    signedEvents = signedEvents.map(event => event.event_id);
+    events = events.filter(event => !signedEvents.includes(event.event_id));
+    res.send({
+      status: true,
+      data: events,
     });
   } catch (error) {
     res.send({
