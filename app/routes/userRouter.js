@@ -4,6 +4,7 @@ import auth from '../middleware/auth';
 const router = express.Router();
 
 import userController from '../controllers/userController';
+import eventController from '../controllers/eventController';
 
 router.get('/users', auth.ensureToken, async (req, res) => {
   try {
@@ -95,6 +96,27 @@ router.post('/signin', async (req, res) => {
     res.send({
       status: false,
       message: `${error}`,
+    });
+  }
+});
+
+router.get('/user/:id/events/suggested', auth.ensureToken, async (req, res) => {
+  const { id } = req.params;
+  const tags = JSON.parse(req.query.tags);
+  const tagsArray = JSON.parse(tags);
+  try {
+    let events = await eventController.getAllEvents();
+    let signedEvents = await userController.getUserSignedEvents(id);
+    signedEvents = signedEvents.map(event => event.event_id);
+    events = events.filter(event => !signedEvents.includes(event.event_id));
+    res.send({
+      status: true,
+      data: events,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      error: `${error}`,
     });
   }
 });
