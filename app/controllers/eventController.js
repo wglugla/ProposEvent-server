@@ -168,7 +168,7 @@ export default {
   },
 
   async modifyEvent(event) {
-    const { event_id, owner_id, place, date, description, tags } = event;
+    const { event_id, owner_id, title, place, date, description, tags } = event;
 
     try {
       const schema = Joi.object().keys({
