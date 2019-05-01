@@ -56,7 +56,7 @@ export default {
       }
       target.dataValues.eventsCreated = eventsCreated.count;
       target.dataValues.eventsSigned = eventsMember.count;
-      if (!target) throw 'Not found';
+      if (!target) throw 'Nie znaleziono!';
       return target;
     } catch (error) {
       throw error;
@@ -187,7 +187,7 @@ export default {
         },
       });
       if (result.length) {
-        throw new Error('User already exists');
+        throw new Error('Użytkownik już istnieje!');
       } else {
         let newTags = tags.split(',');
         for (const el of newTags) {
@@ -199,7 +199,7 @@ export default {
                 },
               });
               if (!checktag) {
-                throw 'Tag not exists!';
+                throw 'Użyty tag nie istnieje!';
               }
             } catch (error) {
               throw error;
@@ -225,7 +225,7 @@ export default {
       tags: Joi.string().required(),
     });
     Joi.validate(req.body, schema, (err, val) => {
-      if (err) throw 'Invalid request data';
+      if (err) throw 'Wprowadzono niepoprawne dane!';
     });
     let { tags } = req;
     try {
@@ -268,7 +268,7 @@ export default {
         },
       });
       if (!target) {
-        throw 'Incorrect login or password';
+        throw 'Niepoprawny login lub hasło!';
       }
       const userPassword = target.dataValues.password;
       const result = await bcrypt.compare(password, userPassword);
@@ -305,10 +305,6 @@ export default {
           tags.length > tags.length
             ? (counter / eventTags.length) * 100
             : (counter / tags.length) * 100;
-        console.log(
-          'Procent zgodnych tagow: ',
-          event.dataValues.accuracyPercentage
-        );
       });
       return events;
     } catch (error) {
