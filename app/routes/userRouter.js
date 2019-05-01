@@ -105,10 +105,7 @@ router.get('/user/:id/events/suggested', auth.ensureToken, async (req, res) => {
   const tags = JSON.parse(req.query.tags);
   const tagsArray = JSON.parse(tags);
   try {
-    let events = await eventController.getAllEvents();
-    let signedEvents = await userController.getUserSignedEvents(id);
-    signedEvents = signedEvents.map(event => event.event_id);
-    events = events.filter(event => !signedEvents.includes(event.event_id));
+    let events = await userController.suggestEvents(id, tagsArray);
     res.send({
       status: true,
       data: events,

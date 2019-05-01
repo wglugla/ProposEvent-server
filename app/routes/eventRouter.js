@@ -118,25 +118,4 @@ router.post('/events/removemember', auth.ensureToken, async (req, res) => {
   }
 });
 
-router.get('/events/match/:id', auth.ensureToken, async (req, res) => {
-  const { id } = req.params;
-  const tags = JSON.parse(req.query.tags);
-  const tagsArray = JSON.parse(tags);
-  try {
-    let events = await eventController.getAllEvents();
-    let signedEvents = await userController.getUserSignedEvents(id);
-    signedEvents = signedEvents.map(event => event.event_id);
-    events = events.filter(event => !signedEvents.includes(event.event_id));
-    res.send({
-      status: true,
-      data: events,
-    });
-  } catch (error) {
-    res.send({
-      status: false,
-      error: `${error}`,
-    });
-  }
-});
-
 export default router;

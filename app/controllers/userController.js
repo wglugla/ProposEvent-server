@@ -5,6 +5,7 @@ import tagController from './tagController';
 require('dotenv').config();
 
 import models from '../models/index';
+import eventController from './eventController';
 
 export default {
   /* select * from users */
@@ -165,12 +166,12 @@ export default {
         .required(),
       password: Joi.string()
         .required()
-        .regex(/^[a-zA-Z0-9]{8,30}$/),
+        .regex(/^[a-zA-Z0-9[!@#\$%\^&]{5,20}$/),
       tags: Joi.string().required(),
     });
 
     Joi.validate(user, schema, (err, val) => {
-      if (err) throw 'Invalid request data';
+      if (err) throw 'Wprowadzone dane są niepoprawne!';
     });
 
     bcrypt.hash(password, 8, function(err, hash) {
@@ -284,6 +285,32 @@ export default {
         const userId = target.user_id;
         return { token, userId };
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+  async suggestEvents(userId, tags) {
+    try {
+      let events = await eventController.getAllEvents();
+      let signedEvents = await this.getUserSignedEvents(userId);
+      let signedEventsId = signedEvents.map(event => event.event_id);
+      events = events.filter(event => !signedEventsId.includes(event.event_id));
+      events.forEach(event => {
+        const eventTags = JSON.parse(event.dataValues.event_tags);
+        let counter = 0;
+        tags.forEach(tag => {
+          if (eventTags.includes(tag)) counter++;
+        });
+        event.dataValues.accuracyPercentage =
+          tags.length > tags.length
+            ? (counter / eventTags.length) * 100
+            : (counter / tags.length) * 100;
+        console.log(
+          'Procent zgodnych tagow: ',
+          event.dataValues.accuracyPercentage
+        );
+      });
+      return events;
     } catch (error) {
       throw error;
     }
