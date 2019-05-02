@@ -1,19 +1,44 @@
-# ProposEvent-server
+# ProposEvent-server - REST API
 
-Backend to the project **ProposEvent**
+This is a server for the project **ProposEvent**
+You can check client app here: [ProposEvent-client](https://github.com/wglugla/ProposEvent-client),
 
-## Backend requirements
+## Technologies
 
-REST API using [Node.js](https://nodejs.org/en/docs/), [ExpressJS](http://expressjs.com/), [MySQL](https://github.com/mysqljs/mysql), powered by [Sequelize](http://docs.sequelizejs.com/) and [Bcryptjs](https://www.npmjs.com/package/bcryptjs).
+REST API using
 
-## Shortcut of the app idea
+- [Node.js](https://nodejs.org/en/docs/),
+- [ExpressJS](http://expressjs.com/),
+- [MySQL2](https://www.npmjs.com/package/mysql2), _powered by_
+- [Sequelize](http://docs.sequelizejs.com/) _and_
+- [Bcryptjs](https://www.npmjs.com/package/bcryptjs) (_password encryption_)
+
+## Shortcut of the ProposEvent app idea
 
 User creates account which allows him to:
 
-- create new event and invite people to take part in it
+- create new event and allow people to take part in it
 - take part in an event created by someone
+- edit existing events
+- find events based on user interests
 
-Events are selected by tags connected with your account and each event.
+> NOTE: Events are selected by tags connected with your account and each event.
+
+## Authorization
+
+Most endpoints are protected by Bearer **JSON Web Token** assigned to the logged in user.
+Get access defining headers to your request:
+
+```jsonld=
+headers: {
+    'Content-Type': 'application/json; charset=utf-8',
+    Authorization: `Bearer ${token}`,
+},
+```
+
+## Database model
+
+![](https://user-images.githubusercontent.com/25866930/57068722-d7be0f80-6cd2-11e9-9559-00658973f1ed.png)
 
 ## API
 
@@ -75,12 +100,64 @@ Events are selected by tags connected with your account and each event.
 }
 ```
 
+### Get user's events
+
+- **URL:**:
+  `/users/:id/events`
+- **Method:**
+  `GET`
+- **URL params:**
+  `id(Integer)`
+- **Success response:**
+
+```json
+{
+  "status": true,
+  "data": []
+}
+```
+
+- **Error response:**
+
+```json
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
+### Get user's signed events
+
+- **URL:**:
+  `/users/:id/signedEvents`
+- **Method:**
+  `GET`
+- **URL params:**
+  `id(Integer)`
+- **Success response:**
+
+```json
+{
+  "status": true,
+  "data": []
+}
+```
+
+- **Error response:**
+
+```json
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
 ### Register new user
 
 - **URL:**:
   `/signup`
 - **Method:**
-  `POSt`
+  `POST`
 - **URL params:**
   _none_
 
@@ -119,15 +196,15 @@ Events are selected by tags connected with your account and each event.
 - **URL:**:
   `/signin`
 - **Method:**
-  `POSt`
+  `POST`
 - **URL params:**
   _none_
-  - **Request:**
+- **Request:**
 
 ```json
 {
   "username": "string 5-45 characters required",
-  "password": "string required regex(/^[a-zA-Z0-9]{8,30}$/"
+  "password": "string required regex(/^[a-zA-Z0-9[!@#$%^&]{5,20}$/)"
 }
 ```
 
@@ -147,6 +224,32 @@ Events are selected by tags connected with your account and each event.
 {
   "status": false,
   "error": "Incorrect login or password"
+}
+```
+
+### Match events with user
+
+- **URL:**:
+  `/user/:id/events/suggested`
+- **Method:**
+  `GET`
+- **URL params:**
+  `id(Integer)`
+- **Success response:**
+
+```json
+{
+  "status": true,
+  "data": []
+}
+```
+
+- **Error response:**
+
+```json
+{
+  "status": false,
+  "error": "Error message"
 }
 ```
 
@@ -205,7 +308,7 @@ Events are selected by tags connected with your account and each event.
 }
 ```
 
-### Get all tags
+### Get all events
 
 - **URL:**:
   `/events/`
@@ -257,6 +360,158 @@ Events are selected by tags connected with your account and each event.
 - **Error response:**
 
 ```json
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
+### Create new event
+
+- **URL:**:
+  `/events/create`
+- **Method:**
+  `POST`
+- **URL params:**
+  `none`
+
+- **Request**
+
+```json=
+{
+    "date": "\"
+    "description": "\"
+    "owner_id": ""
+    "place": ""
+    "tags": ""
+    "title": ""
+}
+```
+
+- **Success response:**
+
+```json=
+{
+  "status": true,
+  "data": "Event created"
+}
+```
+
+- **Error response:**
+
+```json=
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
+### Modify event
+
+- **URL:**:
+  `/events/modify/:id`
+- **Method:**
+  `POST`
+- **URL params:**
+  `id (Integer)`
+
+- **Request**
+
+```json=
+{
+    "date": "\"
+    "description": "\"
+    "owner_id": ""
+    "place": ""
+    "tags": ""
+    "title": ""
+}
+```
+
+- **Success response:**
+
+```json=
+{
+  "status": true,
+  "data": "Event modified"
+}
+```
+
+- **Error response:**
+
+```json=
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
+### Add member to event
+
+- **URL:**:
+  `/events/addmember`
+- **Method:**
+  `POST`
+- **URL params:**
+  `null`
+
+- **Request**
+
+```json=
+{
+  "user_id": "",
+  "event_id": ""
+}
+```
+
+- **Success response:**
+
+```json=
+{
+  "status": true,
+  "data": "User Added
+}
+```
+
+- **Error response:**
+
+```json=
+{
+  "status": false,
+  "error": "Error message"
+}
+```
+
+### Remove member from event
+
+- **URL:**:
+  `/events/removemember
+- **Method:**
+  `POST`
+- **URL params:**
+  `null`
+
+- **Request**
+
+```json=
+{
+  "user_id": "",
+  "event_id": ""
+}
+```
+
+- **Success response:**
+
+```json=
+{
+  "status": true,
+  "data": "User Removed
+}
+```
+
+- **Error response:**
+
+```json=
 {
   "status": false,
   "error": "Error message"
