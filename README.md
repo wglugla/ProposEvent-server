@@ -1,5 +1,7 @@
 # ProposEvent-server - REST API
 
+> This repository is archived. It means that I don't work on it anymore. I publish it to show my programming progress.
+
 This is a server for the project **ProposEvent**
 You can check client app here: [ProposEvent-client](https://github.com/wglugla/ProposEvent-client),
 
